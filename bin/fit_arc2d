@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+
+r""" ToDo
+"""
+
+from gnirsarc2d.scripts import fit_arc2d
+
+if __name__ == '__main__':
+    args = fit_arc2d.parser()
+    fit_arc2d.main(args)
