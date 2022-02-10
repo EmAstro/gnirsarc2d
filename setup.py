@@ -20,7 +20,7 @@ def get_scripts():
 def get_requirements():
     r"""Get requirements from a system file.
     """
-    name = 'ESOAsg/requirements.txt'
+    name = 'gnirsarc2d/requirements.txt'
     requirements_file = os.path.join(os.path.dirname(__file__), name)
     install_requires = [line.strip().replace('==', '>=') for line in open(requirements_file)
                         if not line.strip().startswith('#') and line.strip() != '']
@@ -44,7 +44,7 @@ def run_setup(scripts, packages, install_requires):
           author='Ema',
           author_email='emanuele.farina@noirlab.edu',
           keywords='GNIRS astronomy GEMINI',
-          url='https://github.com/EmAstro/ESOAsg',
+          url='https://github.com/EmAstro/gnirsarc2d',
           packages=packages,
           include_package_data=True,
           scripts=scripts,
