@@ -6,15 +6,21 @@ import sys
 import os
 import glob
 
+from setuptools import setup, find_packages
+
+NAME = 'gnirsarc2d'
+VERSION = '0.0.0dev'
+AUTHOR = 'Ema'
+
 
 def get_scripts():
-    r"""Grab scripts in the bin directory and in the sub-folder.
+    r"""Grab scripts in the bin directory
     """
-    scripts = []
+    gnirsarc2d_scripts = []
     if os.path.isdir('bin'):
-        scripts = [script_name for script_name in glob.glob(os.path.join('bin', '*'))
-                   if not os.path.basename(script_name).endswith('.rst') and not os.path.isdir(script_name)]
-    return scripts
+        gnirsarc2d_scripts = [script_name for script_name in glob.glob(os.path.join('bin', '*'))
+                              if not os.path.basename(script_name).endswith('.rst') and not os.path.isdir(script_name)]
+    return gnirsarc2d_scripts
 
 
 def get_requirements():
@@ -26,17 +32,11 @@ def get_requirements():
                         if not line.strip().startswith('#') and line.strip() != '']
     return install_requires
 
-from setuptools import setup, find_packages
-NAME = 'gnirsarc2d'
-VERSION = '0.0.0dev'
-AUTHOR = 'Ema'
-
 
 def run_setup(scripts, packages, install_requires):
     r"""Run the setup
     """
     setup(name=NAME,
-          provides=NAME,
           version=VERSION,
           license='TBD',
           description='2D estimates of the wavelength solution of GNIRS data',
@@ -63,7 +63,7 @@ def run_setup(scripts, packages, install_requires):
               'Topic :: Scientific/Engineering :: Astronomy',
               'Topic :: Software Development :: Libraries :: Python Modules',
               'Topic :: Software Development :: User Interfaces'
-          ],
+          ]
           )
 
 
@@ -76,4 +76,4 @@ if __name__ == '__main__':
     # Collate the dependencies based on the system text file
     install_requires = get_requirements()
     # Run setup from setuptools
-run_setup(scripts, packages, install_requires)
+    run_setup(scripts, packages, install_requires)
