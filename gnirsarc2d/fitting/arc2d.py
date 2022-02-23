@@ -90,7 +90,7 @@ def plot_fit(fit2d: object, mask: object, all_pixel: np.array, all_wavelength: n
     # set the size of the plot
     nrow = np.int(2)
     ncol = np.int(np.ceil(len(orders) / 2.))
-    fig = plt.figure(figsize=(2 * ncol, 3 * nrow))
+    fig = plt.figure(figsize=(4 * ncol, 5 * nrow))
 
     outer = gridspec.GridSpec(nrow, ncol, wspace=0.3, hspace=0.2)
 
@@ -127,30 +127,30 @@ def plot_fit(fit2d: object, mask: object, all_pixel: np.array, all_wavelength: n
 
                 wv_order_mod_resid = fit2d(this_pix / tot_pixel_minus_1, this_order)
                 resid_wl = (wv_order_mod_resid / ii - this_wv)
-                resid_wl_global = np.append(resid_wl_global, resid_wl[this_msk])
+                resid_wl_global = np.append(resid_wl_global, resid_wl[~this_msk])
 
                 # Plot the fit
                 ax0.set_title('Order = {0:0.0f}'.format(ii))
                 ax0.plot(spec_vec_norm * tot_pixel_minus_1, wv_order_mod / ii / 10000., color=(rr, gg, bb),
                          linestyle='-', linewidth=2.5)
-                ax0.scatter(this_pix[~this_msk], (wv_order_mod_resid[~this_msk] / ii / 10000.) + \
-                            100. * resid_wl[~this_msk] / 10000., marker='x', color='black', \
-                            linewidth=2.5, s=16.)
                 ax0.scatter(this_pix[this_msk], (wv_order_mod_resid[this_msk] / ii / 10000.) + \
-                            100. * resid_wl[this_msk] / 10000., color=(rr, gg, bb), \
+                            100. * resid_wl[this_msk] / 10000., marker='x', color='black', \
+                            linewidth=2.5, s=16.)
+                ax0.scatter(this_pix[~this_msk], (wv_order_mod_resid[~this_msk] / ii / 10000.) + \
+                            100. * resid_wl[~this_msk] / 10000., color=(rr, gg, bb), \
                             linewidth=2.5, s=16.)
 
                 ax0.set_ylabel(r'Wavelength [$\mu$m]')
 
                 # Plot the residuals
-                ax1.scatter(this_pix[~this_msk], (resid_wl[~this_msk] / dwl), marker='x', color='black', \
+                ax1.scatter(this_pix[this_msk], (resid_wl[this_msk] / dwl), marker='x', color='black', \
                             linewidth=2.5, s=16.)
-                ax1.scatter(this_pix[this_msk], (resid_wl[this_msk] / dwl), color=(rr, gg, bb), \
+                ax1.scatter(this_pix[~this_msk], (resid_wl[~this_msk] / dwl), color=(rr, gg, bb), \
                             linewidth=2.5, s=16.)
                 ax1.axhline(y=0., color=(rr, gg, bb), linestyle=':', linewidth=2.5)
                 ax1.get_yaxis().set_label_coords(-0.15, 0.5)
 
-                rms_order = np.std(resid_wl[this_msk])
+                rms_order = np.std(resid_wl[~this_msk])
 
                 ax1.set_ylabel(r'Res. [pix]')
 
@@ -169,145 +169,3 @@ def plot_fit(fit2d: object, mask: object, all_pixel: np.array, all_wavelength: n
     fig.suptitle(
         r'Arc 2D FIT, RMS={:5.3f} Ang*Order#, residuals $\times$100'.format(rms_global))
     plt.show()
-
-
-
-    """    
-    pypeitFit = fitting.robust_fit(all_pix / xnspecmin1, all_wv_order, (nspec_coeff, fit_order_order), x2=all_orders,
-                                   function=func2d, maxiter=100, lower=sigrej, upper=sigrej, minx=min_spec,
-                                   maxx=max_spec,
-                                   minx2=min_order, maxx2=max_order, use_mad=True, sticky=False)
-    """
-
-    """
-    fin_rms = pypeitFit.calc_fit_rms(x2=all_orders, apply_mask=True)
-    msgs.info("RMS: {0:.5f} Ang*Order#".format(fin_rms))
-
-    if debug:
-        fit2darc_global_qa(pypeitFit, nspec)
-        fit2darc_orders_qa(pypeitFit, nspec)
-
-    return pypeitFit
-    """
-
-'''
-
-def fit2darc_global_qa(pypeitFit, nspec, outfile=None):
-    """ QA on 2D fit of the wavelength solution.
-
-    Parameters
-    ----------
-    pypeitFit: :class:`pypeit.gnirsarc2d.fitting.PypeItFit`:
-      Fit object for the 2D arc solution
-    nspec: int
-    outfile: str
-      parameter for QA
-
-    """
-
-    msgs.info("Creating QA for 2D wavelength solution")
-
-    utils.pyplot_rcparams()
-
-    # Extract info from pypeitFit
-    xnspecmin1 = float(nspec - 1)
-    all_orders = pypeitFit['x2']
-    orders = np.unique(pypeitFit['x2'])
-    all_wv = pypeitFit['yval'] / pypeitFit['x2']
-    all_pix = pypeitFit['xval'] * xnspecmin1
-    gpm = pypeitFit.bool_gpm
-    nspec_coeff = pypeitFit['order'][0]
-    fit_order_order = pypeitFit['order'][1]
-    resid_wl_global = []
-
-    # Define pixels array
-    spec_vec_norm = np.arange(nspec) / xnspecmin1
-
-    # Define figure properties
-    plt.figure(figsize=(8, 5))
-
-    # Variable where to store the max wavelength covered by the
-    # spectrum
-    mx = 0.
-
-    # Loop over orders
-    for ii in orders:
-
-        # define the color
-        rr = (ii - np.max(orders)) / (np.min(orders) - np.max(orders))
-        gg = 0.0
-        bb = (ii - np.min(orders)) / (np.max(orders) - np.min(orders))
-
-        # evaluate solution
-        wv_order_mod = pypeitFit.eval(spec_vec_norm, x2=np.ones_like(spec_vec_norm) * ii)
-        # Plot solution
-        plt.plot(wv_order_mod / ii, spec_vec_norm * xnspecmin1, color=(rr, gg, bb), linestyle='-', linewidth=2.5)
-
-        # Evaluate residuals at each order
-        on_order = all_orders == ii
-        this_pix = all_pix[on_order]
-        this_wv = all_wv[on_order]
-        this_msk = gpm[on_order]
-        this_order = all_orders[on_order]
-        wv_order_mod_resid = pypeitFit.eval(this_pix / xnspecmin1, x2=this_order)
-        resid_wl = (wv_order_mod_resid / ii - this_wv)
-        resid_wl_global = np.append(resid_wl_global, resid_wl[this_msk])
-        plt.scatter((wv_order_mod_resid[~this_msk] / ii) + \
-                    100. * resid_wl[~this_msk], this_pix[~this_msk], \
-                    marker='x', color='black', linewidths=2.5, s=16.)
-        plt.scatter((wv_order_mod_resid[this_msk] / ii) + \
-                    100. * resid_wl[this_msk], this_pix[this_msk], \
-                    color=(rr, gg, bb), linewidth=2.5, s=16.)
-        if np.max(wv_order_mod_resid / ii) > mx:
-            mx = np.max(wv_order_mod_resid / ii)
-
-    rms_global = np.std(resid_wl_global)
-
-    plt.text(mx, np.max(spec_vec_norm * xnspecmin1), r'residuals $\times$100', \
-             ha="right", va="top")
-    plt.title(r'Arc 2D FIT, fit_order_order={:d}, nspec_coeff={:d}, RMS={:5.3f} Ang*Order#'.format(
-        fit_order_order, nspec_coeff, rms_global))
-    plt.xlabel(r'Wavelength [$\AA$]')
-    plt.ylabel(r'Row [pixel]')
-
-    # Finish
-    if outfile is not None:
-        plt.savefig(outfile, dpi=800)
-        plt.close()
-    else:
-        plt.show()
-
-    # restore default rcparams
-    utils.pyplot_rcparams_default()
-
-
-def fit2darc_orders_qa(pypeitFit, nspec, outfile=None):
-    """ QA on 2D fit of the wavelength solution of an Echelle spectrograph.
-    Each panel contains a single order with the global fit and the
-    residuals.
-
-    Parameters
-    ----------
-    pypeitFit: :class:`pypeit.gnirsarc2d.fitting.PypeItFit`:
-      Fit object for the 2D arc solution
-    outfile:
-      parameter for QA
-
-    Returns
-    -------
-    """
-
-    msgs.info("Creating QA for 2D wavelength solution")
-
-    utils.pyplot_rcparams()
-
-    # Extract info from pypeitFit
-
-    # Finish
-    if outfile is not None:
-        plt.savefig(outfile, dpi=800)
-        plt.close()
-    else:
-        plt.show()
-
-'''

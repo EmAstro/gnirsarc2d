@@ -24,6 +24,12 @@ def parser(options=None):
                                help=r"Root filename for the result of the identify task")
     script_parser.add_argument("-c", "--configuration", nargs="+", type=str, default='32/mmSB',
                                help=r"GNIRS configuration")
+    script_parser.add_argument("-ff", "--fit_function", nargs="+", type=str, default='legendre2d',
+                               help=r"function to be used for fitting")
+    script_parser.add_argument("-os", "--fit_order_spec", nargs="+", type=int, default=3,
+                               help=r"order of the fitting along the spectral (pixel) direction for each order")
+    script_parser.add_argument("-oo", "--fit_order_order", nargs="+", type=int, default=4,
+                               help=r"order of the fitting in the order direction")
     if options is None:
         args = script_parser.parse_args()
     else:
@@ -45,6 +51,19 @@ def main(args):
         configuration = gnirs.GnirsConfiguration(name=args.configuration[0])
     else:
         configuration = gnirs.GnirsConfiguration(name=args.configuration)
+    if type(args.fit_function) == list:
+        fit_function = args.fit_function[0]
+    else:
+        fit_function = args.fit_function
+    if type(args.fit_order_spec) == list:
+        fit_order_spec = args.fit_order_spec[0]
+    else:
+        fit_order_spec = args.fit_order_spec
+    if type(args.fit_order_order) == list:
+        fit_order_order = args.fit_order_order[0]
+    else:
+        fit_order_order = args.fit_order_order
+
     pixel, wavelength_iraf, wavelength_archive, order = [], [], [], []
     for slit in configuration.order["slit"]:
         pixel_slit, wavelength_iraf_slit, wavelength_archive_slit = read_iraf_database.get_features_from_identify_table(
@@ -56,8 +75,9 @@ def main(args):
         wavelength_archive.extend(wavelength_archive_slit)
         order.extend(order_slit)
     fit2d, mask = arc2d.full_fit(np.array(pixel), np.array(wavelength_archive), np.array(order),
-                                 tot_pixel=configuration.cols)
+                                 tot_pixel=configuration.cols, fit_function=fit_function,
+                                 fit_order_spec=fit_order_spec, fit_order_order=fit_order_order)
     arc2d.plot_fit(fit2d, mask, np.array(pixel), np.array(wavelength_archive), np.array(order),
                    tot_pixel=configuration.cols)
-    embed()
+
     return
