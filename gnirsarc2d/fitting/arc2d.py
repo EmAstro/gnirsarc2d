@@ -30,9 +30,9 @@ def full_fit(all_pixel: np.array, all_wavelength: np.array, all_orders: np.array
         `Pypeit <https://github.com/pypeit>`_ implementation of the algorithm:
 
     Args:
-        all_pixel (np.array): centroid position in pixels of the identified lines
-        all_wavelength (np.array): true wavelength of the identified lines
-        all_orders (np.array): order number where the line are identified lines
+        all_pixel (array): centroid position in pixels of the identified lines
+        all_wavelength (array): true wavelength of the identified lines
+        all_orders (array): order number where the line are identified lines
         tot_pixel (int): size of the image in the spectral direction
         fit_order_spec (int): order of the fitting along the spectral (pixel) direction for each order
         fit_order_order (int): order of the fitting in the order direction
@@ -41,7 +41,7 @@ def full_fit(all_pixel: np.array, all_wavelength: np.array, all_orders: np.array
         niter (int): number of iterations for the rejection algorithm
 
     Returns:
-        fit2d, mask
+        fit2d, mask: result of the fit and mask of the rejected lines.
 
     """
     # Normalize for pixels.

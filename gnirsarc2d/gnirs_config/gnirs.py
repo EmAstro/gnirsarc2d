@@ -8,7 +8,7 @@ CONFIGURATION_NAMES = [None, '32/mmSB']
 
 
 class GnirsConfiguration:
-    """
+    """Class containing the properties of GNIRS given a configuration.
 
     Attributes:
 

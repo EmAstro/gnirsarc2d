@@ -13,7 +13,16 @@ EXAMPLES = str(r"""EXAMPLES:""" + """\n""" + """\n""" +
 
 def parser(options=None):
     script_parser = argparse.ArgumentParser(
-        description=r"""TBD""" + """\n""" + """\n""" +
+        description=r"""Fit of the wavelength solution for GNIRS data \n""" +
+                    r"""The code looks for the lines identified with IRAF in the directory: 'database_directory' """ +
+                    r"""and performs a 2D fit of the lines taking into account the grating equation. """ +
+                    r"""This means that arc line wavelengths are determined determined using both their pixel """ +
+                    r"""their order location, making the result more robust for orders in which only few """ +
+                    r"""lamp lines are detected. \n""" +
+                    r"""The GNIRS configuration needs to be specified to be able to translate the slit number """ +
+                    r"""provided by the GNIRS pipeline into an order number. """ +
+                    r"""\n""" +
+                    r"""\n""" +
                     r"""This is version {:s}""".format(__version__),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=EXAMPLES)

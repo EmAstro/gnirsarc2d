@@ -52,7 +52,7 @@ def _get_central_column(columns_id_block: list, select_column: int) -> int:
 
 
 class IrafIdentify:
-    """
+    """Class that contains information about the lines detected by IRAF.
 
     """
 
