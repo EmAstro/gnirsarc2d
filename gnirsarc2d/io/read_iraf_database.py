@@ -3,6 +3,9 @@ import re
 
 NUMBER_PATTERN = '[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)|-?\d+(?:\.\d+)?'
 
+# ToDo fix documentation
+# ToDo double check the conversion in pixel from IRAF (1 based) to Python (0 based)
+
 
 def _clean_string(string_to_be_cleaned: str) -> int:
     return re.sub('\s+', ' ', string_to_be_cleaned).strip()
@@ -54,6 +57,15 @@ def _get_central_column(columns_id_block: list, select_column: int) -> int:
 class IrafIdentify:
     """Class that contains information about the lines detected by IRAF.
 
+    Attributes:
+        date (str): date when the `identify` task ran
+        column (str): column considered extract wavelengths
+        units (str): units used by `identify`
+        feature_pixel (list): pixel location of the detected lines
+        feature_measured_wavelength (list): measured wavelength after IRAF fitting
+        feature_archive_wavelength (list): archived wavelength
+        feature_fwhm (list): required FWHM of the feature
+
     """
 
     def __init__(self, date: str = None, column: str = None, units: str = None,
@@ -80,6 +92,8 @@ class IrafIdentify:
             self.feature_fwhm = feature_fwhm
 
     def from_iraf_id_lines(self, id_table_lines: list):
+        """Fill an IrafIdentify object from the output of IRAF identify
+        """
         for index_line, identify_table_line in enumerate(id_table_lines):
             if '# ' in identify_table_line:
                 self.date = _clean_string(identify_table_line.replace("# ", "").replace("\n", ""))

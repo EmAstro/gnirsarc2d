@@ -11,9 +11,16 @@ class GnirsConfiguration:
     """Class containing the properties of GNIRS given a configuration.
 
     Attributes:
+        name (str): name of the GNIRS configuration
+        mode (str): mode used
+        grating (str): grating used
+        camera (str): camera used
+        order (dict): dictionary to translate the slit number into an order number
+        rows (int): size of the detector in the spectral direction
+        cols (int): size of the detector in the spatial direction
 
     """
-    def __init__(self, name=None):
+    def __init__(self, name: str = None):
         r"""Instantiate the class GnirsConfiguration
 
         """

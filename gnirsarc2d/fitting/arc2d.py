@@ -16,7 +16,7 @@ FIT_FUNCTIONS = ['legendre2d', 'chebyshev2d']
 def full_fit(all_pixel: np.array, all_wavelength: np.array, all_orders: np.array,
              tot_pixel: float, fit_order_spec: int = 3, fit_order_order: int = 4,
              fit_function: str = 'legendre2d', sigma: float = 3.0,
-             niter: int = 100):
+             niter: int = 100) -> tuple:
     r"""Obtain the 2D wavelength solution for an Echelle spectrograph.
 
     This is calculated from the pixel centroid and the order number of identified arc lines. The fit is a simple
@@ -75,7 +75,20 @@ def full_fit(all_pixel: np.array, all_wavelength: np.array, all_orders: np.array
 
 
 def plot_fit(fit2d: object, mask: object, all_pixel: np.array, all_wavelength: np.array, all_orders: np.array,
-             tot_pixel: float):
+             tot_pixel: float) -> None:
+    """Plot the result of the fitting process order by order.
+
+    Args:
+        fit2d (object): result of the fitting procedure
+        mask (object): data rejected by the fitting procedure
+        all_pixel (array): centroid position in pixels of the identified lines
+        all_wavelength (array): true wavelength of the identified lines
+        all_orders (array): order number where the line are identified lines
+        tot_pixel (int): size of the image in the spectral direction
+
+    Returns:
+        None
+    """
 
     # define the different orders
     orders = np.unique(all_orders)
@@ -167,5 +180,7 @@ def plot_fit(fit2d: object, mask: object, all_pixel: np.array, all_wavelength: n
 
     fig.text(0.5, 0.04, r'Row [pixel]', ha='center', size='large')
     fig.suptitle(
-        r'Arc 2D FIT, RMS={:5.3f} Ang*Order#, residuals $\times$100'.format(rms_global))
+        r'Arc 2D FIT, RMS={:5.3f} Ang*Order#, residuals $\times$ 100'.format(rms_global))
     plt.show()
+
+    return

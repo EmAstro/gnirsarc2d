@@ -1,28 +1,31 @@
 import argparse
 import numpy as np
-from IPython import embed
+# from IPython import embed
 
 from gnirsarc2d.gnirs_config import gnirs
 from gnirsarc2d.fitting import arc2d
 from gnirsarc2d import __version__
 
 EXAMPLES = str(r"""EXAMPLES:""" + """\n""" + """\n""" +
-               r"""TBD """ +
+               r""">>> fit_arc2d --database_directory ./database/ --root_filename idwarc_comb_SCI """ + """\n""" +
                r""" """)
 
 
 def parser(options=None):
     script_parser = argparse.ArgumentParser(
-        description=r"""Fit of the wavelength solution for GNIRS data \n""" +
-                    r"""The code looks for the lines identified with IRAF in the directory: 'database_directory' """ +
+        description=r"""Fit of the wavelength solution for GNIRS data""" + """\n""" + """\n""" +
+                    r"""The code looks for the lines identified with IRAF in the directory: `database_directory` """ +
                     r"""and performs a 2D fit of the lines taking into account the grating equation. """ +
                     r"""This means that arc line wavelengths are determined determined using both their pixel """ +
-                    r"""their order location, making the result more robust for orders in which only few """ +
-                    r"""lamp lines are detected. \n""" +
-                    r"""The GNIRS configuration needs to be specified to be able to translate the slit number """ +
-                    r"""provided by the GNIRS pipeline into an order number. """ +
-                    r"""\n""" +
-                    r"""\n""" +
+                    r"""and their order location, making the result more robust for orders in which only few """ +
+                    r"""lamp lines are detected.""" + """\n""" +
+                    r"""The GNIRS configuration needs to be specified. This is necessary to translate """ +
+                    r"""the slit number """ +
+                    r"""provided by the GNIRS pipeline into an order number.""" + """\n""" +
+                    r"""The 'root_filename' argument is in the format: `idFILENAME`. The code will """ +
+                    r"""look for all the files present in the database with format: `idFILENAME_SLITNUMBER_` """ +
+                    r"""that is the format in which the GNIRS IRAF pipeline.""" + """\n""" +
+                    """\n""" +
                     r"""This is version {:s}""".format(__version__),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=EXAMPLES)
