@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from astropy.modeling import models, fitting
 from astropy.stats import sigma_clip
 
-from IPython import embed
+# from IPython import embed
 
 FIT_FUNCTIONS = ['legendre2d', 'chebyshev2d']
 
